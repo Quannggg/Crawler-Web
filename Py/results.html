@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+    <h2>Search Results for "{{ search_term }}"</h2>
+    <table border="1">
+        <tr>
+            <th>Date Published</th>
+            <th>Abstract Views</th>
+            <th>Views PDF</th>
+            <th>DOI</th>
+            <th>Title</th>
+            <th>Author's Name</th>
+            <th>Affiliation</th>
+        </tr>
+        {% for entry in data %}
+            <tr>
+                <td>{{ entry['date_published'] }}</td>
+                <td>{{ entry['abstract_views'] }}</td>
+                <td>{{ entry['views_pdf'] }}</td>
+                <td>{{ entry['doi_value'] }}</td>
+                <td><a href="{{ entry['title_value'] }}">{{ entry['header_title'] }}</a></td>
+                <td>{{ entry['author_text'] }}</td>
+                <td>{{ entry['affiliation_text'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

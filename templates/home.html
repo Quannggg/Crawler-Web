@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Home page{% endblock %}
+
+{% block content %}
+<h2>Scrawl Website</h2>
+<div style="margin-left: 50px;">
+    <form action="#" method="post">
+        <label for="search">Search:</label>
+        <input type="search" name="search" id="search"></input>
+        <button style="background-color: slateblue;color: white;" type="submit">Submit</button>
+    </form>
+</div>
+
+{% if articles %}
+<h2>Search Results</h2>
+<table style="border-collapse: collapse; width: 80%; margin: 20px auto;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">ID</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Publication_date</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Views_summary</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Views_pdf</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">DOI_link</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Header_title</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Link_title</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Affiliation_text</th>
+            <!-- Add more headers for other attributes if needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for article in articles %}
+        <tr>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.id }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.publication_date }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.views_summary }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.views_pdf }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">
+            <a href="{{ article.doi_link }}" target="_blank">{{ article.doi_link }}</a>
+        </td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.header_title }}</td>
+        <td style="padding: 10px; border: 1px solid #ddd;">
+            <a href="{{ article.link_title }}" target="_blank">{{ article.link_title }}</a>
+        </td>
+        <td style="padding: 10px; border: 1px solid #ddd;">{{ article.affiliation_text }}</td>
+
+        
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

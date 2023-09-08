@@ -1,6 +1,18 @@
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+*.db
+
+# Virtual environment
+venv/
+env/
+
+# VSCode
 .vscode/
-/venv/
-.db
-.pyc
-.sql
+*.code-workspace
+
+# Editor-specific files
+*~

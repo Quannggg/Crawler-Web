@@ -56,9 +56,9 @@ To make the most of our Elegant Web Crawler and Search Application, follow these
 ## Web Crawling
 To extract information from web pages and store it in the database, run the following command:```python extractInformation.py```
 
-### New Version
+# New Version
 You can get the information from the urls we provide and download it as .zip file
-## Usage
+## Usage New Version 
 To make the most of our Elegant Web Crawler and Search Application, follow these steps:
 1. **Start the Flask application by running the following command:** ```python app.py```
 2. **Access the application in your web browser by visiting [http://localhost:8000/](http://localhost:8000/).**

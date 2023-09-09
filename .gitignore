@@ -16,3 +16,10 @@ env/
 
 # Editor-specific files
 *~
+# Database
+*.sqlite3
+*.db
+*.sql
+# File
+*.csv
+*.zip

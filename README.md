@@ -45,10 +45,22 @@ Before you get started, make sure you have the following prerequisites installed
   source venv/bin/activate
   ```
 
-5. **Install the required Python packages within the virtual environment using pip:** ```pip install -r requirements.txt```
+5. **Install the required Python packages within the virtual environment using pip:**
+- ```pip install beautifulsoup4```
+- ```pip install requests```
+- ```pip install sqlalchemy```
 ## Usage
 To make the most of our Elegant Web Crawler and Search Application, follow these steps:
 1. **Start the Flask application by running the following command:** ```python app.py```
 2. **Access the application in your web browser by visiting [http://localhost:8000/](http://localhost:8000/).**
 ## Web Crawling
 To extract information from web pages and store it in the database, run the following command:```python extractInformation.py```
+
+### New Version
+You can get the information from the urls we provide and download it as .zip file
+## Usage
+To make the most of our Elegant Web Crawler and Search Application, follow these steps:
+1. **Start the Flask application by running the following command:** ```python app.py```
+2. **Access the application in your web browser by visiting [http://localhost:8000/](http://localhost:8000/).**
+3. **Copy the urls you want, if there are many, separate them with commas, paste in the urls bar and click submit button:**
+- Example:```https://tcnhikhoa.vn/index.php/tcnk/issue/archive,https://tapchitaimuihong.vn/index.php/tmh/issue/archive``` and please waiting for Crawl progress.

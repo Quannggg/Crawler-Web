@@ -1,13 +1,10 @@
 from flask import Flask, render_template, request
 from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.inspection import inspect
 from dataBaseModel import Base, TCNK_Table, TMH_Table, YHTHVB_Table, DDVTP_Table, YHN_Table
 from extractInformation import extract_information_ddvtp, extract_information_tcnk, extract_information_tmh, extract_information_yhn, extract_information_yhthvb
 from extractInformation import export_table_to_csv, create_zip_file
-import csv
-import zipfile
-import os
+from flask import send_file
 app = Flask(__name__)
 
 # Configure the database connection

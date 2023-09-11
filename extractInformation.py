@@ -1,9 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
-from sqlalchemy import create_engine, Column, String, Integer
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
 from dataBaseModel import Base, TCNK_Table, TMH_Table, YHTHVB_Table, DDVTP_Table, YHN_Table
 import csv
 import zipfile
@@ -14,6 +12,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 # Create the tables in the database
 Base.metadata.create_all(engine)
+
+
 def extract_information_tcnk(url):
     result = requests.get(url)
     if result.status_code != 200:
@@ -119,6 +119,7 @@ def extract_information_tcnk(url):
 
                     session.add(tcnk)
                     session.commit()
+
 
 # extract_information(url)
 
@@ -235,6 +236,8 @@ def extract_information_yhthvb(url):
 
                     session.add(yhthvb)
                     session.commit()
+
+
 # extract_information_yhthvb("https://jbdmp.vn/index.php/yhthvb/issue/archive")
 
 
@@ -347,6 +350,8 @@ def extract_information_ddvtp(url):
 
                     session.add(ddvtp)
                     session.commit()
+
+
 # extract_information_ddvtp("https://tapchidinhduongthucpham.org.vn/index.php/jfns/issue/archive")
 
 
@@ -455,6 +460,8 @@ def extract_information_yhn(url):
 
                     session.add(yhn)
                     session.commit()
+
+
 # extract_information_yhn("https://tapchinghiencuuyhoc.vn/index.php/tcncyh/issue/archive")
 
 
@@ -556,6 +563,8 @@ def extract_information_tmh(url):
 
                     session.add(tmh)
                     session.commit()
+
+
 # extract_information_tmh("https://tapchitaimuihong.vn/index.php/tmh/issue/archive")
 
 
@@ -581,7 +590,7 @@ def export_table_to_csv(table, csv_filename):
             # Write data rows
             for record in records:
                 csv_writer.writerow([getattr(record, column)
-                                    for column in column_names])
+                                     for column in column_names])
 
         session.close()
         return True  # Success

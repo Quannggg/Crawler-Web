@@ -26,9 +26,9 @@ To embark on your journey with our Elegant Web Crawler and Search Application, f
 
 Before you get started, make sure you have the following prerequisites installed:
 
-- **Python 3.x**
-- **Flask**
-- **SQLAlchemy**
+- **Python 3.x** :```sudo apt install python3```
+- **Flask** : ```pip install flask```
+- **SQLAlchemy** : ```pip install sqlalchemy```
 
 ### Installation
 

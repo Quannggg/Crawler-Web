@@ -20,9 +20,10 @@ def extract_information_tcnk(url):
         print(
             f"Failed to retrieve the page {url}. Status code: {result.status_code}")
         return
-    if session.query(TCNK_Table).count() > 0:
-        print("TCNK table already has data. Function deactivated.")
-        return
+    with Session() as session:
+        if session.query(TCNK_Table).count() > 0:
+            print("TCNK table already has data. Function deactivated.")
+            return
     soup = BeautifulSoup(result.text, 'html.parser')
     media_bodies = soup.find_all('div', {'class': 'media-body'})
     last_numbers_list = []
@@ -121,8 +122,7 @@ def extract_information_tcnk(url):
                     session.commit()
 
 
-# extract_information(url)
-
+# extract_information_tcnk("https://tcnhikhoa.vn/index.php/tcnk/issue/archive")
 
 def extract_information_yhthvb(url):
     result = requests.get(url)
@@ -130,9 +130,10 @@ def extract_information_yhthvb(url):
         print(
             f"Failed to retrieve the page {url}. Status code: {result.status_code}")
         return
-    if session.query(TMH_Table).count() > 0:
-        print("YHTHVB table already has data. Function deactivated.")
-        return
+    with Session() as session:
+        if session.query(YHTHVB_Table).count() > 0:
+            print("YHTHVB table already has data. Function deactivated.")
+            return
 
     soup = BeautifulSoup(result.text, 'html.parser')
     media_bodies = soup.find_all('div', {'class': 'issue-summary-body'})
@@ -247,9 +248,10 @@ def extract_information_ddvtp(url):
         print(
             f"Failed to retrieve the page {url}. Status code: {result.status_code}")
         return
-    if session.query(TMH_Table).count() > 0:
-        print("DDVTP table already has data. Function deactivated.")
-        return
+    with Session() as session:
+        if session.query(DDVTP_Table).count() > 0:
+            print("DDVTP table already has data. Function deactivated.")
+            return
 
     soup = BeautifulSoup(result.text, 'html.parser')
     media_bodies = soup.find_all('div', {'class': 'issue-summary-body'})
@@ -361,9 +363,10 @@ def extract_information_yhn(url):
         print(
             f"Failed to retrieve the page {url}. Status code: {result.status_code}")
         return
-    if session.query(TMH_Table).count() > 0:
-        print("YHN table already has data. Function deactivated.")
-        return
+    with Session() as session:
+        if session.query(YHN_Table).count() > 0:
+            print("YHN table already has data. Function deactivated.")
+            return
     soup = BeautifulSoup(result.text, 'html.parser')
     media_bodies = soup.find_all('div', {'class': 'issue-summary media'})
     last_numbers_list = []
@@ -471,9 +474,10 @@ def extract_information_tmh(url):
         print(
             f"Failed to retrieve the page {url}. Status code: {result.status_code}")
         return
-    if session.query(TMH_Table).count() > 0:
-        print("TMH table already has data. Function deactivated.")
-        return
+    with Session() as session:
+        if session.query(TMH_Table).count() > 0:
+            print("TMH table already has data. Function deactivated.")
+            return
     soup = BeautifulSoup(result.text, 'html.parser')
     media_bodies = soup.find_all('div', {'class': 'issue-summary-body'})
     last_numbers_list = []
@@ -569,11 +573,9 @@ def extract_information_tmh(url):
 
 
 def export_table_to_csv(table, csv_filename):
+    if os.path.exists(csv_filename) or os.path.exists(csv_filename + ".zip"):
+        return True  # CSV or ZIP file already exists
     try:
-        engine = create_engine('sqlite:///information.db')
-        Session = sessionmaker(bind=engine)
-        session = Session()
-
         # Query all records from the specified table
         records = session.query(table).all()
 
@@ -600,6 +602,8 @@ def export_table_to_csv(table, csv_filename):
 
 
 def create_zip_file(csv_filename, zip_filename):
+    if os.path.exists(zip_filename):
+        return True  # ZIP file already exists
     try:
         with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
             zipf.write(csv_filename, os.path.basename(csv_filename))

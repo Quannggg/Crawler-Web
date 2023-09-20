@@ -44,11 +44,28 @@ Before you get started, make sure you have the following prerequisites installed
   ```
   source venv/bin/activate
   ```
-
 5. **Install the required Python packages within the virtual environment using pip:**
 - ```pip install beautifulsoup4```
 - ```pip install requests```
 - ```pip install sqlalchemy```
+- ```pip install flask```
+- ```pip install Flask-SocketIO```
+## Note
+For easy installation, use our [installation script](./install_crawler_web.sh).
+
+### To use the installation script:
+1. **Download and save the script to your Ubuntu machine.**
+
+2. **Make the script executable:**
+   ```
+   chmod +x install_crawler_web.sh
+   ```
+
+3. **Run the script:**
+   ```
+   ./install_crawler_web.sh
+   ```
+
 ## Usage
 To make the most of our Elegant Web Crawler and Search Application, follow these steps:
 1. **Start the Flask application by running the following command:** ```python app.py```
@@ -56,11 +73,10 @@ To make the most of our Elegant Web Crawler and Search Application, follow these
 ## Web Crawling
 To extract information from web pages and store it in the database, run the following command:```python extractInformation.py```
 
-# New Version
+## New Version
 You can get the information from the urls we provide and download it as .zip file
 ## Usage New Version 
 To make the most of our Elegant Web Crawler and Search Application, follow these steps:
 1. **Start the Flask application by running the following command:** ```python app.py```
-2. **Access the application in your web browser by visiting [http://localhost:8000/](http://localhost:8000/).**
-3. **Copy the urls you want, if there are many, separate them with commas, paste in the urls bar and click submit button:**
-- Example:```https://tcnhikhoa.vn/index.php/tcnk/issue/archive,https://tapchitaimuihong.vn/index.php/tmh/issue/archive``` and please waiting for Crawl progress.
+2. **Access the application in your web browser by visiting [http://localhost:5000](http://localhost:8000/).**
+3. **Select the list of urls you want and click the button** ```Start Processing```

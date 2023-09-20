@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Home page{% endblock %}
@@ -5,51 +6,101 @@
 {% block content %}
 <h2>Scrawl Website</h2>
 <div style="margin-left: 50px;">
-    <form action="#" method="post">
-        <label for="search">Urls:</label>
-        <input type="search" name="search" id="search" style = "width: 500px;"></input>
-        <button style="background-color: slateblue;color: white;" type="submit">Submit</button>
+    <form id="crawl-form">
+        <p>Please select the URLs</p>
+        <label>
+            <input id="option1" name="choice" type="checkbox" value="tcnk">
+            https://tcnhikhoa.vn/index.php/tcnk/issue/archive
+        </label><br>
+        <label>
+            <input id="option2" name="choice" type="checkbox" value="tmh">
+            https://tapchitaimuihong.vn/index.php/tmh/issue/archive
+        </label><br>
+        <label>
+            <input id="option3" name="choice" type="checkbox" value="yhthvb">
+            https://jbdmp.vn/index.php/yhthvb/issue/archive
+        </label><br>
+        <label>
+            <input id="option4" name="choice" type="checkbox" value="ddvtp">
+            https://tapchidinhduongthucpham.org.vn/index.php/jfns/issue/archive
+        </label><br>
+        <label>
+            <input id="option5" name="choice" type="checkbox" value="yhn">
+            https://tapchinghiencuuyhoc.vn/index.php/tcncyh/issue/archive
+        </label><br>
+        <button id="startProcessingBtn" type="button" >Start Processing</button>
     </form>
 </div>
-<h2>List Urls</h2>
-<div style="margin-left: 50px;">
-    <a href="https://tcnhikhoa.vn/index.php/tcnk/issue/archive">https://tcnhikhoa.vn/index.php/tcnk/issue/archive</a><br>
-    <a href="https://jbdmp.vn/index.php/yhthvb/issue/archive">https://jbdmp.vn/index.php/yhthvb/issue/archive</a><br>
-    <a href="https://tapchidinhduongthucpham.org.vn/index.php/jfns/issue/archive">https://tapchidinhduongthucpham.org.vn/index.php/jfns/issue/archive</a><br>
-    <a href="https://tapchinghiencuuyhoc.vn/index.php/tcncyh/issue/archive">https://tapchinghiencuuyhoc.vn/index.php/tcncyh/issue/archive</a><br>
-    <a href="https://tapchitaimuihong.vn/index.php/tmh/issue/archive">https://tapchitaimuihong.vn/index.php/tmh/issue/archive</a><br>
+<div id="statusMessage" style="color: red; margin-top: 20px; margin-left: 50px;"></div>
+<div id="downloads" style="display:None; margin-left: 50px;">
+    <div id="tcnk-download" style="display: None;">
+        <h3>Download TCNK Data:</h3>
+        <a download href="{{ tcnk_zip_url }}">Download TCNK.zip</a>
+    </div>
+    <div id="tmh-download" style="display: None;">
+        <h3>Download TMH Data:</h3>
+        <a download href="{{ tmh_zip_url }}">Download TMH.zip</a>
+    </div>
+    <div id="yhthvb-download" style="display: None;">
+        <h3>Download YHTHVB Data:</h3>
+        <a download href="{{ yhthvb_zip_url }}">Download YHTHVB.zip</a>
+    </div>
+    <div id="ddvtp-download" style="display: None;">
+        <h3>Download DDVTP Data:</h3>
+        <a download href="{{ ddvtp_zip_url }}">Download DDVTP.zip</a>
+    </div>
+    <div id="yhn-download" style="display: None;">
+        <h3>Download YHN Data:</h3>
+        <a download href="{{ yhn_zip_url }}">Download YHN.zip</a>
+    </div>
 </div>
-{% if tcnk_zip_url %}
-<div id = "tcnk-download">
-    <h3>Download TCNK Data:</h3>
-    <a href="{{tcnk_zip_url}}" download>Download TCNK.zip</a>
-</div>
-{% endif %}
-{% if tmh_zip_url %}
-<div id = "tmh-download">
-    <h3>Download TMH Data:</h3>
-    <a href="{{tmh_zip_url}}" download>Download TMH.zip</a>
-</div>
-{% endif %}
-{% if yhthvb_zip_url %}
-<div id = "yhthvb-download">
-    <h3>Download YHTHVB Data:</h3>
-    <a href="{{ yhthvb_zip_url }}" download>Download YHTHVB.zip</a>
-</div>
-{% endif %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script type ="text/javascript">
+(function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-{% if ddvtp_zip_url %}
-<div id = ddvtp-download>
-    <h3>Download DDVTP Data:</h3>
-    <a href="{{ ddvtp_zip_url }}" download>Download DDVTP.zip</a>
-</div>
-{% endif %}
+    socket.on('processing_complete', function(response_data) {
+        document.getElementById("statusMessage").innerText = "";
+        updateDownloadLink("tcnk-download", response_data.tcnkZipUrl);
+        updateDownloadLink("tmh-download", response_data.tmhZipUrl);
+        updateDownloadLink("yhthvb-download", response_data.yhthvbZipUrl);
+        updateDownloadLink("ddvtp-download", response_data.ddvtpZipUrl);
+        updateDownloadLink("yhn-download", response_data.yhnZipUrl);
+    });
 
-{% if yhn_zip_url %}
-<div id = yhn-download>
-    <h3>Download YHN Data:</h3>
-    <a href="{{ yhn_zip_url }}" download>Download YHN.zip</a>
-</div>
+    document.getElementById("startProcessingBtn").addEventListener("click", startProcessing);
 
-{% endif %}
+    function startProcessing() {
+        var choices = [];
+        document.querySelectorAll('input[name="choice"]:checked').forEach(function(checkbox) {
+            choices.push(checkbox.value);
+        });
+
+        document.getElementById("statusMessage").innerText = "Crawl process is running";
+        socket.emit('process_urls', choices);
+    }
+
+    function updateDownloadLink(elementId, zipUrl) {
+        var downloadDiv = document.getElementById("downloads");
+        if (zipUrl) {
+            document.getElementById(elementId).style.display = "block";
+            let linkElement = document.querySelector("#" + elementId + " a");
+            if (linkElement) {
+                linkElement.href = zipUrl;
+            } else {
+                console.warn("Element not found:", "#" + elementId + " a");
+            }
+            downloadDiv.style.display = "block";  // Show the parent div
+        } else {
+            document.getElementById(elementId).style.display = "none";
+            // Check if all links are hidden. If so, hide the parent div
+            var allHidden = Array.from(downloadDiv.children).every(child => child.style.display === "none");
+            if (allHidden) {
+                downloadDiv.style.display = "none";
+            }
+        }
+    }
+
+})();
+</script>
 {% endblock %}

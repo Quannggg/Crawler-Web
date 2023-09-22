@@ -7,6 +7,7 @@ from extractInformation import extract_information_ddvtp, extract_information_tc
 from extractInformation import export_table_to_csv, create_zip_file
 from flask import send_file
 from flask_socketio import SocketIO, emit
+import threading
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -19,8 +20,8 @@ yhthvb_zip_url = None
 ddvtp_zip_url = None
 yhn_zip_url = None
 tmh_zip_url = None
-crawling_status = False
-temps = []
+crawling_status = ""
+download_urls = []
 
 
 @app.route('/')
@@ -31,14 +32,16 @@ def home():
 
 @socketio.on('process_urls')
 def process_urls(choices):
-    global tcnk_zip_url, tmh_zip_url, yhthvb_zip_url, ddvtp_zip_url, yhn_zip_url
+    thread = threading.Thread(target=perform_extraction, args=(choices,))
+    thread.start()
+
+
+def perform_extraction(choices):
+    global crawling_status, download_urls,tcnk_zip_url, tmh_zip_url, yhthvb_zip_url, ddvtp_zip_url, yhn_zip_url
     tcnk_zip_url = tmh_zip_url = yhthvb_zip_url = ddvtp_zip_url = yhn_zip_url
-    global crawling_status
-    global temps
-    temps = choices
+    crawling_status = "in_progress"
+    socketio.emit('status_update', {"status": "in-progress"}, namespace='/')
     print(choices)
-    print(temps)
-    crawling_status = False
     response_data = {
         "tcnkZipUrl": None,
         "tmhZipUrl": None,
@@ -54,6 +57,7 @@ def process_urls(choices):
             if create_zip_file('tcnk.csv', 'tcnk.zip'):
                 tcnk_zip_url = 'tcnk.zip'
                 response_data["tcnkZipUrl"] = tcnk_zip_url
+                socketio.emit('processing_complete', response_data, namespace='/')
         elif choice == 'tmh':
             extract_information_tmh('https://tapchitaimuihong.vn/index.php/tmh/issue/archive')
             export_table_to_csv(TMH_Table, 'tmh.csv')
@@ -61,6 +65,7 @@ def process_urls(choices):
             if create_zip_file('tmh.csv', 'tmh.zip'):
                 tmh_zip_url = 'tmh.zip'
                 response_data["tmhZipUrl"] = tmh_zip_url
+                socketio.emit('processing_complete', response_data, namespace='/')
         elif choice == 'yhthvb':
             extract_information_yhthvb('https://jbdmp.vn/index.php/yhthvb/issue/archive')
             export_table_to_csv(YHTHVB_Table, 'yhthvb.csv')
@@ -68,6 +73,7 @@ def process_urls(choices):
             if create_zip_file('yhthvb.csv', 'yhthvb.zip'):
                 yhthvb_zip_url = 'yhthvb.zip'
                 response_data["yhthvbZipUrl"] = yhthvb_zip_url
+                socketio.emit('processing_complete', response_data, namespace='/')
         elif choice == 'ddvtp':
             extract_information_ddvtp('https://tapchidinhduongthucpham.org.vn/index.php/jfns/issue/archive')
             export_table_to_csv(DDVTP_Table, 'ddvtp.csv')
@@ -75,6 +81,7 @@ def process_urls(choices):
             if create_zip_file('ddvtp.csv', 'ddvtp.zip'):
                 ddvtp_zip_url = 'ddvtp.zip'
                 response_data["ddvtpZipUrl"] = ddvtp_zip_url
+                socketio.emit('processing_complete', response_data, namespace='/')
         elif choice == 'yhn':
             extract_information_yhn('https://tapchinghiencuuyhoc.vn/index.php/tcncyh/issue/archive')
             export_table_to_csv(YHN_Table, 'yhn.csv')
@@ -82,8 +89,22 @@ def process_urls(choices):
             if create_zip_file('yhn.csv', 'yhn.zip'):
                 yhn_zip_url = 'yhn.zip'
                 response_data["yhnZipUrl"] = yhn_zip_url
+                socketio.emit('processing_complete', response_data, namespace='/')
     print(response_data)
-    emit('processing_complete', response_data)
+    crawling_status = "completed"
+    download_urls = response_data
+    print(download_urls)
+    socketio.emit('status_update', {"status": "completed"}, namespace='/')
+    socketio.emit('processing_complete', response_data, namespace='/')
+
+
+@socketio.on('check_status')
+def check_status():
+    if crawling_status == "completed":
+        data = {"status": "completed", "urls": download_urls}
+    else:
+        data = {"status": crawling_status}
+    socketio.emit('status_update', data, namespace='/')
 
 
 @app.route('/<filename>')

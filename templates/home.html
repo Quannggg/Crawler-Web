@@ -100,7 +100,21 @@
             }
         }
     }
-
+    socket.emit('check_status');
+    socket.on('status_update', function(data) {
+    if(data.status === "in-progress") {
+        document.getElementById("statusMessage").innerText = "Processing is ongoing...";
+    } else if(data.status === "completed" && data.urls) {
+        document.getElementById("statusMessage").innerText = "Processing is complete!";
+        updateDownloadLink("tcnk-download", data.urls.tcnkZipUrl);
+        updateDownloadLink("tmh-download",data.urls.tmhZipUrl);
+        updateDownloadLink("yhthvb-download",data.urls.yhthvbZipUrl);
+        updateDownloadLink("ddvtp-download",data.urls.ddvtpZipUrl);
+        updateDownloadLink("yhn-download",data.urls.yhnZipUrl);
+    } else {
+        document.getElementById("statusMessage").innerText = "";
+    }
+});
 })();
 </script>
 {% endblock %}

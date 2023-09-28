@@ -18,7 +18,6 @@ env/
 *~
 # Database
 *.sqlite3
-*.db
 *.sql
 # File
 *.csv
